@@ -1,6 +1,7 @@
 {
-  "name": "angularenterpriseseed",
-  "version": "0.0.0",
+  "name": "angular-enterprise-seed",
+  "version": "0.0.1",
+  "author": "Owen Chen @ IBM CDL",
   "dependencies": {},
   "devDependencies": {
     "grunt": "~0.4.1",
@@ -31,7 +32,10 @@
     "karma-ng-scenario": "~0.1.0",
     "grunt-karma": "~0.8.3",
     "karma": "~0.12.14",
-    "karma-ng-html2js-preprocessor": "~0.1.0"
+    "karma-ng-html2js-preprocessor": "~0.1.0",
+    "grunt-recess": "~0.6.1",
+    "grunt-html2js": "~0.2.4",
+    "grunt-connect-proxy": "~0.1.10"
   },
   "engines": {
     "node": ">=0.8.0"

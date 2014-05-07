@@ -18,6 +18,9 @@
   "strict": true,
   "trailing": true,
   "smarttabs": true,
+  "sub": true,
+  "boss": true,
+  "eqnull": true,
   "globals": {
     "angular": false
   }
