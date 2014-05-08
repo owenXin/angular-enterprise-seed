@@ -450,7 +450,7 @@ module.exports = function(grunt) {
    * compilation.
    */
   grunt.registerMultiTask('index', 'Process index.html template', function() {
-    var dirRE = new RegExp('^(' + grunt.config('src_dir') + '|' + grunt.config('serve_dir') + '|' + grunt.config('dist_dir') + ')\/', 'g');
+    var dirRE = new RegExp('^(' + grunt.config('src_dir') + '|' + grunt.config('serve_dir') + '|' + grunt.config('dist_dir')+ '|' + grunt.config('build_dir') + ')\/', 'g');
     var jsFiles = filterForJS(this.filesSrc).map(function(file) {
       return file.replace(dirRE, '');
     });
@@ -458,7 +458,7 @@ module.exports = function(grunt) {
       return file.replace(dirRE, '');
     });
 
-    grunt.file.copy('src/index-tpl.html', this.data.dir + '/index.html', {
+    grunt.file.copy('src/index.tpl.html', this.data.dir + '/index.html', {
       process: function(contents, path) {
         return grunt.template.process(contents, {
           data: {

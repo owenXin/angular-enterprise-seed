@@ -21,7 +21,7 @@ module.exports = {
 
   app_files: {
     html: {
-      index: ['src/index-tpl.html']
+      index: ['src/index.tpl.html']
     },
     js: {
       main: ['src/app/app.js'],
