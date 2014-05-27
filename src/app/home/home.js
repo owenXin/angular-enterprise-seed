@@ -12,9 +12,8 @@
  * The dependencies block here is also where component dependencies should be
  * specified, as shown below.
  */
-angular.module( 'ngBoilerplate.home', [
-  'ui.router',
-  'plusOne'
+angular.module( 'angularEnterpriseSeedApp.home', [
+  'ui.router'
 ])
 
 /**
@@ -28,7 +27,7 @@ angular.module( 'ngBoilerplate.home', [
     views: {
       "main": {
         controller: 'HomeCtrl',
-        templateUrl: 'home/home.tpl.html'
+        templateUrl: 'app/home/home.tpl.html'
       }
     },
     data:{ pageTitle: 'Home' }

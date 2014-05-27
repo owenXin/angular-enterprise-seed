@@ -63,7 +63,8 @@ module.exports = {
     js: [
       'jquery/jquery.js',
       'angular/angular.js',
-      'bootstrap/dist/js/bootstrap.js'
+      'bootstrap/dist/js/bootstrap.js',
+      'angular-ui-router/release/angular-ui-router.js'
     ],
     js_ex: [
       'es5-shim/es5-shim.js',

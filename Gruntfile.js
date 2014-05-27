@@ -58,6 +58,24 @@ module.exports = function(grunt) {
         }]
       },
 
+      serve_css: {
+        files: [{
+          src: ['**'],
+          dest: '<%= serve_dir %>/styles/',
+          expand: true,
+          cwd: '<%= build_dir %>/styles/'
+        }]
+      },
+
+      serve_js: {
+        files: [{
+          src: ['**'],
+          dest: '<%= serve_dir %>/scripts/',
+          expand: true,
+          cwd: '<%= build_dir %>/scripts/'
+        }]
+      },
+
       dist_assets: {
         files: [{
           src: ['**'],
@@ -74,15 +92,6 @@ module.exports = function(grunt) {
           expand: true,
           cwd: 'src/vendor'
         }]
-      },
-
-      dist_app_js: {
-        files: [{
-          src: ['<%= app_files.js.main %>', '<%= app_files.js.common %>', '<%= app_files.js.app %>'],
-          dest: '<%= build_dir %>/',
-          cwd: '.',
-          expand: true
-        }]
       }
     },
 
@@ -95,26 +104,27 @@ module.exports = function(grunt) {
        * The `dist_app_js` target is the concatenation of our application source
        * code and all specified vendor source code into a single file.
        */
-      dist_app_js: {
+      build_app_js: {
         options: {
           banner: '<%= meta.banner %>',
           separator: '\n;'
         },
         src: [
-          '<%= build_dir %>/src/app/**/*.js',
+          '<%= app_files.js.main %>',
+          '<%= app_files.js.app %>'
         ],
-        dest: '<%= dist_dir %>/scripts/app.js'
+        dest: '<%= build_dir %>/scripts/app.js'
       },
 
-      dist_common_js: {
+      build_common_js: {
         options: {
           banner: '<%= meta.banner %>',
           separator: '\n;'
         },
         src: [
-          '<%= build_dir %>/src/common/**/*.js',
+          '<%= app_files.js.common %>'
         ],
-        dest: '<%= dist_dir %>/scripts/common.js'
+        dest: '<%= build_dir %>/scripts/common.js'
       }
 
     },
@@ -126,9 +136,9 @@ module.exports = function(grunt) {
       dist: {
         files: [{
           expand: true,
-          cwd: '<%= dist_dir %>/scripts',
+          cwd: '<%= build_dir %>/scripts',
           src: '*.js',
-          dest: '<%= dist_dir %>/scripts'
+          dest: '<%= build_dir %>/scripts'
         }]
       }
     },
@@ -142,8 +152,8 @@ module.exports = function(grunt) {
           banner: '<%= meta.banner %>'
         },
         files: {
-          '<%= concat.dist_app_js.dest %>': '<%= concat.dist_app_js.dest %>',
-          '<%= concat.dist_common_js.dest %>': '<%= concat.dist_common_js.dest %>',
+          '<%= dist_dir %>/scripts/app.js': '<%= concat.build_app_js.dest %>',
+          '<%= dist_dir %>/scripts/common.js': '<%= concat.build_common_js.dest %>',
           '<%= dist_dir %>/scripts/templates-app.js': '<%= html2js.app.dest %>',
           '<%= dist_dir %>/scripts/templates-common.js': '<%= html2js.common.dest %>'
         }
@@ -155,23 +165,22 @@ module.exports = function(grunt) {
      */
     recess: {
 
-      serve_app: {
+      build_app: {
         src: ['<%= app_files.less.main %>', '<%= app_files.less.app %>'],
-        dest: '<%= serve_dir %>/styles/app.css',
+        dest: '<%= build_dir %>/styles/app.css',
         options: {
           separator: '\n;',
           compile: true
         }
       },
 
-      serve_common: {
+      build_common: {
         src: ['<%= app_files.less.common %>'],
-        dest: '<%= serve_dir %>/styles/common.css',
+        dest: '<%= build_dir %>/styles/common.css',
         options: {
           banner: '<%= meta.banner %>',
           separator: '\n;',
-          compile: true,
-          compress: true
+          compile: true
         }
       }
     },
@@ -184,9 +193,9 @@ module.exports = function(grunt) {
       serve: {
         files: [{
           expand: true,
-          cwd: '<%= serve_dir %>/styles/',
+          cwd: '<%= build_dir %>/styles/',
           src: '*.css',
-          dest: '<%= serve_dir %>/styles/'
+          dest: '<%= build_dir %>/styles/'
         }]
       },
     },
@@ -197,8 +206,8 @@ module.exports = function(grunt) {
       },
       dist: {
         files: {
-          '<%= dist_dir %>/styles/app.css': '<%= recess.serve_app.dest %>',
-          '<%= dist_dir %>/styles/common.css': '<%= recess.serve_common.dest %>'
+          '<%= dist_dir %>/styles/app.css': '<%= recess.build_app.dest %>',
+          '<%= dist_dir %>/styles/common.css': '<%= recess.build_common.dest %>'
         }
       }
     },
@@ -231,7 +240,7 @@ module.exports = function(grunt) {
           base: 'src'
         },
         src: ['<%= app_files.tpl.app %>'],
-        dest: '<%= serve_dir %>/scripts/templates-app.js'
+        dest: '<%= build_dir %>/scripts/templates-app.js'
       },
 
       /**
@@ -242,7 +251,7 @@ module.exports = function(grunt) {
           base: 'src'
         },
         src: ['<%= app_files.tpl.common %>'],
-        dest: '<%= serve_dir %>/scripts/templates-common.js'
+        dest: '<%= build_dir %>/scripts/templates-common.js'
       }
     },
 
@@ -373,34 +382,35 @@ module.exports = function(grunt) {
   grunt.initConfig(grunt.util._.extend(taskConfig, userConfig));
 
 
-  grunt.registerTask('prepare', [
-    'clean:serve',
+  grunt.registerTask('pre_build', [
+    'clean:build',
     'recess',
     'autoprefixer',
     'jshint',
-    'html2js',
-    'index:serve'
+    'html2js'
   ]);
 
   grunt.registerTask('serve', [
-    'prepare',
+    'clean:serve',
+    'pre_build',
+    'copy:serve_css',
+    'copy:serve_js',
+    'index:serve',
     'connect:livereload',
     'watch'
   ]);
 
   grunt.registerTask('build', [
-    'prepare',
     'clean:dist',
+    'pre_build',
     'copy:dist_vendor',
     'copy:dist_assets',
-    'copy:dist_app_js',
     'cssmin',
-    'concat:dist_app_js',
-    'concat:dist_common_js',
+    'concat:build_app_js',
+    'concat:build_common_js',
     'ngmin',
     'uglify:dist',
-    'index:dist',
-    'clean:build'
+    'index:dist'
   ]);
 
   grunt.registerTask('preview', [
